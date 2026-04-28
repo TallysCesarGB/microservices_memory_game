@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/context/ThemeContext';
 import { useGame } from '@/context/GameContext';
+import { useAuth } from '@/context/AuthContext';
 import { ThemeType, THEMES } from '@/constants/themes';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -46,6 +47,7 @@ export default function ThemeSelectScreen() {
   const router = useRouter();
   const { setTheme, theme } = useTheme();
   const { resetGame } = useGame();
+  const { token, signOut, isReady, username } = useAuth();
   const [selected, setSelected] = useState<ThemeType | null>(null);
 
   const scaleAnims = useRef(
@@ -88,6 +90,29 @@ export default function ThemeSelectScreen() {
     >
       <SafeAreaView style={styles.safe}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+          <View style={styles.authBar}>
+            <View style={styles.authInfo}>
+              <Text style={styles.authLabel}>ACESSO</Text>
+              <Text style={styles.authValue} numberOfLines={1}>
+                {isReady && token && username ? `👤 ${username}` : 'Nenhuma sessão ativa'}
+              </Text>
+            </View>
+            {isReady && token ? (
+              <TouchableOpacity onPress={signOut} style={styles.authButtonSecondary}>
+                <Text style={styles.authButtonSecondaryText}>Sair</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.authActions}>
+                <TouchableOpacity onPress={() => router.push('/auth/login')} style={styles.authButtonSecondary}>
+                  <Text style={styles.authButtonSecondaryText}>Entrar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.push('/auth/register')} style={styles.authButtonPrimary}>
+                  <Text style={styles.authButtonPrimaryText}>Registrar</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.superTitle}>🃏 MEMORY GAME</Text>
@@ -211,6 +236,61 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   safe: { flex: 1 },
   scroll: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 20 },
+  authBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 18,
+    padding: 14,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    gap: 12,
+  },
+  authInfo: {
+    flex: 1,
+  },
+  authLabel: {
+    fontFamily: 'Orbitron_700Bold',
+    fontSize: 9,
+    color: '#8b949e',
+    letterSpacing: 2,
+    marginBottom: 4,
+  },
+  authValue: {
+    fontFamily: 'Orbitron_400Regular',
+    fontSize: 11,
+    color: '#fff',
+  },
+  authActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  authButtonSecondary: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: 'rgba(255,255,255,0.03)',
+  },
+  authButtonSecondaryText: {
+    color: '#fff',
+    fontFamily: 'Orbitron_700Bold',
+    fontSize: 10,
+  },
+  authButtonPrimary: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: '#FFCB05',
+  },
+  authButtonPrimaryText: {
+    color: '#000',
+    fontFamily: 'Orbitron_900Black',
+    fontSize: 10,
+  },
   header: {
     alignItems: 'center',
     marginBottom: 32,
