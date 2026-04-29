@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { GameProvider } from '@/context/GameContext';
+import { AuthProvider } from '@/context/AuthContext';
 import {
   useFonts,
   PressStart2P_400Regular,
@@ -33,6 +34,8 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+        <Stack.Screen name="auth/register" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="game/level"
@@ -72,9 +75,11 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={styles.container}>
       <ThemeProvider>
-        <GameProvider>
-          <RootLayoutNav />
-        </GameProvider>
+        <AuthProvider>
+          <GameProvider>
+            <RootLayoutNav />
+          </GameProvider>
+        </AuthProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

@@ -1,0 +1,18 @@
+services:
+  auth-service:
+    build:
+      context: ./backend
+    container_name: auth-service
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./backend/data:/app/data
+
+  auth-gateway:
+    build:
+      context: ./gateway
+    container_name: auth-gateway
+    depends_on:
+      - auth-service
+    ports:
+      - "8081:8081"
